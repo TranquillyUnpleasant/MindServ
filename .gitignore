@@ -1,4 +1,3 @@
-    /build/*
-    /.gradle/*
-    /.idea/*
-    test.sh
+.idea/
+.gradle/
+*.sh

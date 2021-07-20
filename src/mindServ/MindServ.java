@@ -14,6 +14,7 @@ public class MindServ{
     public static ContentHandler contentHandler = new ContentHandler();
     public static HttpServer server;
     public static ThreadPoolExecutor executor;
+    public static final String assets = "/content";
 
     public static void main(String[] args){
         Log.info("Loading server.");
@@ -22,6 +23,11 @@ public class MindServ{
         }catch(IOException e){
             Log.err(e);
             System.exit(1);
+        }
+        File contentDir = new File(assets);
+        if (!contentDir.exists() && !contentDir.mkdir()) {
+            Log.err("Could not create content directory.");
+            System.exit(0);
         }
         executor = (ThreadPoolExecutor)Executors.newFixedThreadPool(10);
 

@@ -14,7 +14,7 @@ public class HandleMap implements HttpHandler{
     @Override
     public void handle(HttpExchange ex) throws IOException{
         Log.info(ex.getRequestMethod());
-        if (!ex.getRequestMethod().equals("POST")){
+        if(!ex.getRequestMethod().equals("POST")){
             emptyResponse(ex, 400);
             return;
         }
@@ -27,12 +27,12 @@ public class HandleMap implements HttpHandler{
         Log.info(map.author);
         Log.info(map.description);
 
-        File imgFile = new File("iocontent/" + randomString(10) + ".png");
+        File imgFile = new File(assets + randomString(10) + ".png");
         ImageIO.write(map.image, "png", imgFile);
 
         Headers headers = ex.getResponseHeaders();
         headers.add("Content-Type", "application/json");
-        if (map.author != null){
+        if(map.author != null){
             headers.add("author", Base64Coder.encodeString(map.author));
             headers.add("desc", Base64Coder.encodeString(map.description));
             headers.add("size", Base64Coder.encodeString(map.image.getWidth() + " x " + map.image.getHeight()));

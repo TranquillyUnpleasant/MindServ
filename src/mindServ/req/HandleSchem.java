@@ -19,7 +19,7 @@ public class HandleSchem implements HttpHandler{
     public void handle(HttpExchange ex) throws IOException{
         if (ex.getRequestMethod().equals("GET")){
             String token = ex.getRequestHeaders().get("token").get(0);
-            File file = new File("iocontent/" + token + ".msch");
+            File file = new File(assets + token + ".msch");
             if (!file.exists()){
                 emptyResponse(ex, 400);
                 return;
@@ -62,8 +62,8 @@ public class HandleSchem implements HttpHandler{
         Log.info(name);
 
         String id = randomString(10);
-        File imgFile = new File("iocontent/" + id + "_msch.png");
-        File schemFile = new File("iocontent/" + id + ".msch");
+        File imgFile = new File(assets + id + "_msch.png");
+        File schemFile = new File(assets + id + ".msch");
         ImageIO.write(preview, "png", imgFile);
         Schematics.write(schem, new Fi(schemFile));
 

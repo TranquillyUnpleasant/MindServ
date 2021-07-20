@@ -202,7 +202,7 @@ public class ContentHandler{
         }
 
         //discard version
-        input.read();
+        if (input.read() == -1) throw new IOException("Empty file");
 
         try(DataInputStream stream = new DataInputStream(new InflaterInputStream(input))){
             short width = stream.readShort(), height = stream.readShort();

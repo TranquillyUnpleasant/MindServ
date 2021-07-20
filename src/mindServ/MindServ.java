@@ -14,7 +14,7 @@ public class MindServ{
     public static ContentHandler contentHandler = new ContentHandler();
     public static HttpServer server;
     public static ThreadPoolExecutor executor;
-    public static final String assets = "/content";
+    public static final String assets = "content/";
 
     public static void main(String[] args){
         Log.info("Loading server.");

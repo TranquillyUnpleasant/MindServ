@@ -17,7 +17,7 @@ allprojects{
 
 ext{
     //currently unused
-    mindustryVersion = 'v128'
+    mindustryVersion = 'v130'
 }
 
 task dist(type: Jar){
@@ -35,6 +35,6 @@ task dist(type: Jar){
 }
 
 dependencies{
-    implementation "com.github.Anuken.Arc:arc-core:db7090ae8a694b918a7bcdc3565deb8d2acf71ab"
-    implementation "com.github.Anuken.Mindustry:core:2ae7863caed3023d14140d2fe84723802d8f78ab"
+    implementation "com.github.Anuken.Arc:arc-core:$mindustryVersion"
+    implementation "com.github.Anuken.Mindustry:core:$mindustryVersion"
 }

@@ -222,7 +222,7 @@ public class ContentHandler{
             }
 
             int total = stream.readInt();
-            if(total > 128 * 128) throw new IOException("Schematic has too many blocks.");
+            if(total > 128 * 128) throw new IllegalArgumentException("Schematic has too many blocks.");
             Seq<Stile> tiles = new Seq<>(total);
             for(int i = 0; i < total; i++){
                 Block block = blocks.get(stream.readByte());

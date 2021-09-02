@@ -15,11 +15,12 @@ public class MindServ{
     public static HttpServer server;
     public static ThreadPoolExecutor executor;
     public static final String assets = "content/";
+    public static final int port = 6969;
 
     public static void main(String[] args){
         Log.info("Loading server.");
         try{
-            server = HttpServer.create(new InetSocketAddress(6969), 0);
+            server = HttpServer.create(new InetSocketAddress(port), 0);
         }catch(IOException e){
             Log.err(e);
             System.exit(1);
@@ -37,7 +38,7 @@ public class MindServ{
         server.setExecutor(executor);
         server.start();
 
-        Log.info("Server started on port 6969.");
+        Log.info("Server started on port" + port + ".");
     }
 
     public static void emptyResponse(HttpExchange ex, int code){

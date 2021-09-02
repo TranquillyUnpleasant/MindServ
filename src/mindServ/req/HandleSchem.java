@@ -17,10 +17,10 @@ import static mindServ.MindServ.*;
 public class HandleSchem implements HttpHandler{
     @Override
     public void handle(HttpExchange ex) throws IOException{
-        if (ex.getRequestMethod().equals("GET")){
+        if(ex.getRequestMethod().equals("GET")){
             String token = ex.getRequestHeaders().get("token").get(0);
             File file = new File(assets + token + ".msch");
-            if (!file.exists()){
+            if(!file.exists()){
                 emptyResponse(ex, 400);
                 return;
             }
@@ -30,7 +30,7 @@ public class HandleSchem implements HttpHandler{
             fileResponse(ex, file);
             return;
         }
-        if (!ex.getRequestMethod().equals("POST")){
+        if(!ex.getRequestMethod().equals("POST")){
             emptyResponse(ex, 400);
             return;
         }
@@ -41,11 +41,11 @@ public class HandleSchem implements HttpHandler{
         BufferedImage preview;
         Schematic schem;
         try{
-            if (req.startsWith(schemHeader)){
+            if(req.startsWith(schemHeader)){
                 Log.info("Processing text schematic.");
                 schem = contentHandler.parseSchematic(req);
                 preview = contentHandler.previewSchematic(schem);
-            }else if (req.startsWith("https://") && req.endsWith(".msch")){
+            }else if(req.startsWith("https://") && req.endsWith(".msch")){
                 Log.info("Processing file schematic.");
                 schem = contentHandler.parseSchematicURL(req);
                 preview = contentHandler.previewSchematic(schem);
@@ -53,7 +53,11 @@ public class HandleSchem implements HttpHandler{
                 emptyResponse(ex, 400);
                 return;
             }
-        }catch (Exception e){
+        }catch(IllegalArgumentException e){
+            Log.err(e);
+            emptyResponse(ex, 413);
+            return;
+        }catch(Exception e){
             Log.err(e);
             emptyResponse(ex, 400);
             return;

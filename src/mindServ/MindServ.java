@@ -38,7 +38,7 @@ public class MindServ{
         server.setExecutor(executor);
         server.start();
 
-        Log.info("Server started on port" + port + ".");
+        Log.info("Server started on port " + port + ".");
     }
 
     public static void emptyResponse(HttpExchange ex, int code){

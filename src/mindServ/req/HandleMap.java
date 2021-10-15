@@ -28,7 +28,8 @@ public class HandleMap implements HttpHandler{
         Log.info(map.description);
 
         File imgFile = new File(assets + randomString(10) + ".png");
-        ImageIO.write(map.image, "png", imgFile);
+        boolean terrain = Boolean.parseBoolean(ex.getRequestHeaders().get("terrain").get(0));
+        ImageIO.write(terrain ? map.terrain : map.image, "png", imgFile);
 
         Headers headers = ex.getResponseHeaders();
         headers.add("Content-Type", "application/json");

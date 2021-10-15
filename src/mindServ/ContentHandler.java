@@ -42,11 +42,6 @@ public class ContentHandler{
     ObjectMap<String, Fi> imageFiles = new ObjectMap<>();
     ObjectMap<String, BufferedImage> regions = new ObjectMap<>();
 
-    //for testing only
-    //public static void main(String[] args) throws Exception{
-    //    new ContentHandler().previewSchematic(Schematics.readBase64("bXNjaAF4nDWQXW6DQAyEB3b5MX/JW0/BQ6repuoDJa6EBEsFJFJu01v0WL1C7XWLhD6NGc8sizPOKXwYFsbTyzIF7i/P+zgcB2/9lT84jIx8Ht553pG9/nx9v3kUfwaU4xru/Fg31NPBS7+vt038p8/At2U4prG/btM8A7jIiwzxISBBihypghTOlFMlx4EXayIDr3MICkRFqmJMIog72f+w06HancIZvCGD04ocsak0Z4VEURsaQyufpM1rZiGW1Ik97pW6F0+v62RFZEVkRaRFihhNFk0WTRZNds5KMyGIP1bZndQ6VETVmGpMtaZa6+/sEjpVv/XMJCs="));
-    //}
-
     public ContentHandler(){
         //clear cache
         new Fi("cache").deleteDirectory();
@@ -279,8 +274,10 @@ public class ContentHandler{
 
             var floors = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             var walls = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            var fgraphics = floors.createGraphics();
-            var jcolor = new java.awt.Color(0, 0, 0, 64);
+            var terrain = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D fgraphics = floors.createGraphics();
+            Graphics2D tgraphics = terrain.createGraphics();
+            java.awt.Color jcolor = new java.awt.Color(0, 0, 0, 64);
             int black = 255;
             CachedTile tile = new CachedTile(){
                 @Override
@@ -290,6 +287,8 @@ public class ContentHandler{
                     int c = MapIO.colorFor(block(), Blocks.air, Blocks.air, team());
                     if(c != black && c != 0){
                         walls.setRGB(x, floors.getHeight() - 1 - y, conv(c));
+                        tgraphics.setColor(jcolor);
+                        tgraphics.drawRect(x, floors.getHeight() - 1 - y + 1, 1, 1);
                         fgraphics.setColor(jcolor);
                         fgraphics.drawRect(x, floors.getHeight() - 1 - y + 1, 1, 1);
                     }
@@ -344,8 +343,10 @@ public class ContentHandler{
 
             fgraphics.drawImage(walls, 0, 0, null);
             fgraphics.dispose();
+            tgraphics.dispose();
 
             out.image = floors;
+            out.terrain = terrain;
 
             return out;
 
@@ -362,5 +363,6 @@ public class ContentHandler{
         public String name, author, description;
         public ObjectMap<String, String> tags = new ObjectMap<>();
         public BufferedImage image;
+        public BufferedImage terrain;
     }
 }

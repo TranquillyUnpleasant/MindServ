@@ -287,8 +287,6 @@ public class ContentHandler{
                     int c = MapIO.colorFor(block(), Blocks.air, Blocks.air, team());
                     if(c != black && c != 0){
                         walls.setRGB(x, floors.getHeight() - 1 - y, conv(c));
-                        tgraphics.setColor(jcolor);
-                        tgraphics.drawRect(x, floors.getHeight() - 1 - y + 1, 1, 1);
                         fgraphics.setColor(jcolor);
                         fgraphics.drawRect(x, floors.getHeight() - 1 - y + 1, 1, 1);
                     }
@@ -334,8 +332,10 @@ public class ContentHandler{
                 public Tile create(int x, int y, int floorID, int overlayID, int wallID){
                     if(overlayID != 0){
                         floors.setRGB(x, floors.getHeight() - 1 - y, conv(MapIO.colorFor(Blocks.air, Blocks.air, content.block(overlayID), Team.derelict)));
+                        terrain.setRGB(x, floors.getHeight() - 1 - y, conv(MapIO.colorFor(Blocks.air, content.block(floorID), Blocks.air, Team.derelict)));
                     }else{
                         floors.setRGB(x, floors.getHeight() - 1 - y, conv(MapIO.colorFor(Blocks.air, content.block(floorID), Blocks.air, Team.derelict)));
+                        terrain.setRGB(x, floors.getHeight() - 1 - y, conv(MapIO.colorFor(Blocks.air, content.block(floorID), Blocks.air, Team.derelict)));
                     }
                     return tile;
                 }

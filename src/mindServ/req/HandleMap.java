@@ -29,14 +29,10 @@ public class HandleMap implements HttpHandler{
         Log.info(map.description);
 
         File imgFile = new File(assets + randomString(10) + ".png");
-        Log.info("Before boolean check");
         List<String> param = ex.getRequestHeaders().get("terrain");
-        boolean terrain = param != null && Boolean.parseBoolean(param.get(0));
-        Log.info("It gets here");
-        Log.info(map.image);
-        Log.info(map.terrain);
-        Log.info("There isnt anything to log");
-        ImageIO.write(terrain ? map.terrain : map.image, "png", imgFile);
+        ImageIO.write(
+        param != null && Boolean.parseBoolean(param.get(0)) ? map.terrain : map.image, "png", imgFile
+        );
 
         Headers headers = ex.getResponseHeaders();
         headers.add("Content-Type", "application/json");

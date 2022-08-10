@@ -44,5 +44,7 @@ public class HandleMap implements HttpHandler{
         }
 
         fileResponse(ex, imgFile);
+
+        mapCount++;
     }
 }

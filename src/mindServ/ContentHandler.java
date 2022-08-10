@@ -1,5 +1,4 @@
 package mindServ;
-
 import arc.*;
 import arc.files.*;
 import arc.graphics.Color;
@@ -9,6 +8,7 @@ import arc.graphics.g2d.TextureAtlas.*;
 import arc.math.*;
 import arc.math.geom.*;
 import arc.struct.*;
+import arc.util.Log;
 import arc.util.io.*;
 import arc.util.serialization.*;
 import mindustry.*;
@@ -28,7 +28,8 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.*;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.zip.*;
 
 import static mindustry.Vars.*;
@@ -41,6 +42,11 @@ public class ContentHandler{
     BufferedImage currentImage;
     ObjectMap<String, Fi> imageFiles = new ObjectMap<>();
     ObjectMap<String, BufferedImage> regions = new ObjectMap<>();
+
+    //for testing only
+    //public static void main(String[] args) throws Exception{
+    //    new ContentHandler().previewSchematic(Schematics.readBase64("bXNjaAF4nDWQXW6DQAyEB3b5MX/JW0/BQ6repuoDJa6EBEsFJFJu01v0WL1C7XWLhD6NGc8sizPOKXwYFsbTyzIF7i/P+zgcB2/9lT84jIx8Ht553pG9/nx9v3kUfwaU4xru/Fg31NPBS7+vt038p8/At2U4prG/btM8A7jIiwzxISBBihypghTOlFMlx4EXayIDr3MICkRFqmJMIog72f+w06HancIZvCGD04ocsak0Z4VEURsaQyufpM1rZiGW1Ik97pW6F0+v62RFZEVkRaRFihhNFk0WTRZNds5KMyGIP1bZndQ6VETVmGpMtaZa6+/sEjpVv/XMJCs="));
+    //}
 
     public ContentHandler(){
         //clear cache
@@ -197,7 +203,7 @@ public class ContentHandler{
         }
 
         //discard version
-        if (input.read() == -1) throw new IOException("Empty file");
+        input.read();
 
         try(DataInputStream stream = new DataInputStream(new InflaterInputStream(input))){
             short width = stream.readShort(), height = stream.readShort();
@@ -217,7 +223,7 @@ public class ContentHandler{
             }
 
             int total = stream.readInt();
-            if(total > 128 * 128) throw new IllegalArgumentException("Schematic has too many blocks.");
+            if(total > 64 * 64) throw new IOException("Schematic has too many blocks.");
             Seq<Stile> tiles = new Seq<>(total);
             for(int i = 0; i < total; i++){
                 Block block = blocks.get(stream.readByte());
@@ -234,7 +240,7 @@ public class ContentHandler{
     }
 
     public BufferedImage previewSchematic(Schematic schem) throws Exception{
-        if(schem.width > 256 || schem.height > 256) throw new IOException("Schematic cannot be larger than 64x64.");
+        if(schem.width > 256 || schem.height > 256) throw new IOException("Schematic cannot be larger than 256x256.");
         BufferedImage image = new BufferedImage(schem.width * 32, schem.height * 32, BufferedImage.TYPE_INT_ARGB);
 
         Draw.reset();
@@ -244,11 +250,11 @@ public class ContentHandler{
         requests.each(req -> {
             req.animScale = 1f;
             req.worldContext = false;
-            req.block.drawRequestRegion(req, requests);
+            req.block.drawPlanRegion(req, requests);
             Draw.reset();
         });
 
-        requests.each(req -> req.block.drawRequestConfigTop(req, requests));
+        requests.each(req -> req.block.drawPlanConfigTop(req, requests));
 
         return image;
     }
@@ -275,9 +281,8 @@ public class ContentHandler{
             var floors = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             var walls = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             var terrain = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D fgraphics = floors.createGraphics();
-            Graphics2D tgraphics = terrain.createGraphics();
-            java.awt.Color jcolor = new java.awt.Color(0, 0, 0, 64);
+            var fgraphics = floors.createGraphics();
+            var jcolor = new java.awt.Color(0, 0, 0, 64);
             int black = 255;
             CachedTile tile = new CachedTile(){
                 @Override
@@ -332,7 +337,7 @@ public class ContentHandler{
                 public Tile create(int x, int y, int floorID, int overlayID, int wallID){
                     if(overlayID != 0){
                         floors.setRGB(x, floors.getHeight() - 1 - y, conv(MapIO.colorFor(Blocks.air, Blocks.air, content.block(overlayID), Team.derelict)));
-                        terrain.setRGB(x, floors.getHeight() - 1 - y, conv(MapIO.colorFor(Blocks.air, content.block(floorID), Blocks.air, Team.derelict)));
+                        terrain.setRGB(x, floors.getHeight() - 1 - y, conv(MapIO.colorFor(Blocks.air, Blocks.air, content.block(overlayID), Team.derelict)));
                     }else{
                         floors.setRGB(x, floors.getHeight() - 1 - y, conv(MapIO.colorFor(Blocks.air, content.block(floorID), Blocks.air, Team.derelict)));
                         terrain.setRGB(x, floors.getHeight() - 1 - y, conv(MapIO.colorFor(Blocks.air, content.block(floorID), Blocks.air, Team.derelict)));
@@ -343,7 +348,6 @@ public class ContentHandler{
 
             fgraphics.drawImage(walls, 0, 0, null);
             fgraphics.dispose();
-            tgraphics.dispose();
 
             out.image = floors;
             out.terrain = terrain;

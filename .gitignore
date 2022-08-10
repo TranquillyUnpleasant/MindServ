@@ -1,5 +1,5 @@
 .idea/
 .gradle/
-build/
-server/
+build/*
+server/*
 *.sh

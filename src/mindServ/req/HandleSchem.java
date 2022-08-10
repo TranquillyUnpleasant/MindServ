@@ -82,5 +82,7 @@ public class HandleSchem implements HttpHandler{
         headers.add("requestid", Base64Coder.encodeString(id));
 
         fileResponse(ex, imgFile);
+
+        schemCount++;
     }
 }
